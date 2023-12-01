@@ -1,0 +1,18 @@
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: gateway-service
+  profiles:
+    active: native
+  config:
+#    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
+
+server:
+  port: 8080
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

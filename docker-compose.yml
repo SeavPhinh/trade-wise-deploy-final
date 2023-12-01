@@ -1,0 +1,231 @@
+version: '3.8'
+
+networks:
+  trade-wise:
+
+services:
+  # Config Server
+  config-server:
+    build:
+      context: .
+      dockerfile: deployment/config-server.Dockerfile
+    container_name: config-server
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    environment:
+      SPRING_PROFILES_ACTIVE: default,docker
+    ports:
+      - "8888:8080"
+    networks:
+      - trade-wise
+  # Eureka Server
+  eureka-server:
+    build:
+      context: .
+      dockerfile: deployment/eureka-server.Dockerfile
+    container_name: eureka-server
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8761/actuator/health | grep UP || exit 1"
+      retries: 5
+      interval: 10s
+      timeout: 5s
+    restart: unless-stopped
+    environment:
+      SPRING_APPLICATION_NAME: eureka-server
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8761:8761"
+    networks:
+      - trade-wise
+  # User Service
+  user-service:
+    build:
+      context: .
+      dockerfile: deployment/user.Dockerfile
+    container_name: user-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: user-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8081:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+
+  # Post Service
+  post-service:
+    build:
+      context: .
+      dockerfile: deployment/post.Dockerfile
+    container_name: post-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: post-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8083:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+  # Product Service
+  product-service:
+    build:
+      context: .
+      dockerfile: deployment/product.Dockerfile
+    container_name: product-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: product-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8089:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+#  # Shop Service
+  shop-service:
+    build:
+      context: .
+      dockerfile: deployment/shop.Dockerfile
+    container_name: shop-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: shop-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8088:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+#  # User info Service
+  user-info-service:
+    build:
+      context: .
+      dockerfile: deployment/user-info.Dockerfile
+    container_name: user-info-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: user-info-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8084:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+#  # Category Service
+  category-service:
+    build:
+      context: .
+      dockerfile: deployment/category.Dockerfile
+    container_name: category-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: category-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8087:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+#  # Chat Service
+  chat-service:
+    build:
+      context: .
+      dockerfile: deployment/chat.Dockerfile
+    container_name: chat-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: chat-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8082:8080"
+    restart: on-failure
+    networks:
+      - trade-wise
+#  # Gateway
+  gateway-service:
+    build:
+      context: .
+      dockerfile: deployment/gateway.Dockerfile
+    container_name: gateway-service
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/actuator/health | grep UP || exit 1"
+      retries: 3
+      interval: 10s
+      timeout: 5s
+    environment:
+      SPRING_APPLICATION_NAME: gateway-service
+      SPRING_PROFILES_ACTIVE: native,docker
+      SPRING_CONFIG_IMPORT: "configserver:http://config-server:8080"
+    depends_on:
+      config-server:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    restart: on-failure
+    networks:
+      - trade-wise

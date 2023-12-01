@@ -1,0 +1,22 @@
+spring:
+  application:
+    name: post-service
+  profiles:
+    active: native
+  config:
+#    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8083
+
+userUrl: http://USER-SERVICE/
+categoryUrl: http://CATEGORY-SERVICE/
+userInfoUrl: http://USER-INFO-SERVICE/
+
+
+management:
+  tracing:
+    sampling:
+      probability: 1.0

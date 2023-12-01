@@ -1,0 +1,18 @@
+spring:
+  application:
+    name: category-service
+  profiles:
+    active: native
+  config:
+#    import: optional:configserver:http://localhost:8888
+    import: optional:configserver:http://localhost:8888
+  main:
+    allow-bean-definition-overriding: true
+server:
+  port: 8087
+baseUrl: http://gateway-service/
+management:
+  tracing:
+    sampling:
+      probability: 1.0
+

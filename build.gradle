@@ -1,0 +1,304 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.5' apply false
+    id 'io.spring.dependency-management' version '1.1.0' apply false
+}
+
+project("notification-service"){
+
+    // Apply external plugin
+//    apply from: "$rootProject.projectDir/plugin.gradle"
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    // Apply external dependencies
+    apply from: "$rootProject.projectDir/dependencies.gradle"
+
+    group = 'com.example'
+    version = '0.0.1-SNAPSHOT'
+
+    java {
+        sourceCompatibility = '17'
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+
+    }
+
+}
+
+allprojects {
+
+    // Apply external plugin
+    apply from: "$rootProject.projectDir/plugin.gradle"
+
+    apply plugin: 'java'
+    apply plugin: 'org.springframework.boot'
+    apply plugin: 'io.spring.dependency-management'
+
+    // Apply external dependencies
+    apply from: "$rootProject.projectDir/dependencies.gradle"
+
+    group 'com.kshrd.tradewise'
+    version = '0.0.1-SNAPSHOT'
+
+    java {
+        sourceCompatibility = '17'
+    }
+
+    configurations {
+        compileOnly {
+            extendsFrom annotationProcessor
+        }
+    }
+
+    ext {
+        set('springCloudVersion', "2022.0.4")
+    }
+
+    dependencyManagement {
+        imports {
+            mavenBom "org.springframework.cloud:spring-cloud-dependencies:${springCloudVersion}"
+        }
+    }
+
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        if(project.name.contains("eureka-server")){
+            implementation libraries.webFlux
+            implementation libraries.eurekaServer
+            testImplementation  libraries.reactorTest
+            implementation libraries.cloudClient
+            testImplementation  libraries.startTest
+        }
+
+
+        if(project.name.contains("config-server")){
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.configServer
+        }
+
+        if(project.name.contains("gateway-service")){
+
+            implementation libraries.starterWebFlux
+            implementation libraries.gateway
+            implementation libraries.eurekaClient
+            implementation libraries.cloudClient
+            implementation libraries.resourceServer
+            runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.76.Final:osx-aarch_64'
+        }
+        if(project.name.contains("common-service")){
+            implementation libraries.circuitBreaker
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.eurekaClient
+            implementation libraries.cloudClient
+        }
+
+        if(project.name.contains("chat-service")){
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+            implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+            implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+            implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
+            implementation project(':common-service')
+            implementation libraries.webFlux
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+//            implementation libraries.amqpStarter
+//            testImplementation libraries.rabbitMQtest
+            implementation libraries.webSocket
+            implementation libraries.resourceServer
+            implementation libraries.webMvc
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.auth0
+        }
+        if(project.name.contains("notification-service")){
+            implementation project(':common-service')
+            implementation libraries.webSocket
+
+        }
+        if(project.name.contains("user-service")){
+            implementation project(':common-service')
+            implementation libraries.auth0
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.cloudClient
+//        implementation libraries.eurekaClient
+            implementation libraries.keycloakAdmin
+            implementation libraries.webMvc
+            implementation libraries.resourceServer
+//        implementation libraries.springWeb
+            implementation libraries.thymleaf
+            implementation libraries.starterMail
+            implementation libraries.validation
+            implementation libraries.eurekaClient
+//        implementation libraries.zipkinTracking
+//        implementation libraries.zipkinReporter
+        }
+        if(project.name.contains("user-info-service")){
+            implementation project(':common-service')
+            implementation libraries.auth0
+            implementation libraries.webFlux
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+            implementation libraries.resourceServer
+//        runtimeOnly libraries.netty
+            runtimeOnly 'io.netty:netty-resolver-dns-native-macos:4.1.76.Final:osx-aarch_64'
+        }
+
+        if(project.name.contains("category-service")){
+            implementation project(':common-service')
+            implementation libraries.webFlux
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+            implementation libraries.resourceServer
+        }
+
+        if(project.name.contains("post-service")){
+            implementation project(':common-service')
+            implementation libraries.auth0
+            implementation libraries.webFlux
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+            implementation libraries.resourceServer
+        }
+
+        if(project.name.contains("shop-service")){
+            implementation project(':common-service')
+            implementation libraries.auth0
+            implementation libraries.webFlux
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+            implementation libraries.resourceServer
+        }
+
+        if(project.name.contains("product-service")){
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+            implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+            implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+            implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+
+            implementation project(':common-service')
+            implementation libraries.auth0
+            implementation libraries.webFlux
+            implementation libraries.webMvc
+            implementation libraries.validation
+            implementation libraries.jpa
+            implementation libraries.postgresql
+            implementation libraries.actuator
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.cloudClient
+            implementation libraries.eurekaClient
+            implementation libraries.webSocket
+            implementation libraries.resourceServer
+        }
+
+
+        if (
+                        projectDir.name.startsWith("user-service") ||
+                        projectDir.name.startsWith("shop-service") ||
+                        projectDir.name.startsWith("product-service") ||
+                        projectDir.name.startsWith("user-info-service") ||
+                        projectDir.name.startsWith("category-service") ||
+                        projectDir.name.startsWith("post-service") ||
+                        projectDir.name.startsWith("notification-service")
+        )
+        {
+
+            if(!projectDir.name.startsWith("gateway-service")){
+                implementation libraries.keycloak
+                implementation libraries.springWeb
+
+            }
+
+            if (!projectDir.name.startsWith("user-service")) {
+                implementation libraries.webFlux
+                implementation libraries.jpa
+                implementation libraries.postgresql
+            }
+
+
+            if(projectDir.name.startsWith("user-service")){
+                implementation libraries.thymleaf
+                implementation libraries.starterMail
+            }
+
+            if (!projectDir.name.startsWith("category-service")) {
+                implementation libraries.auth0
+            }
+            implementation 'org.springframework.boot:spring-boot-starter-actuator'
+            implementation 'io.micrometer:micrometer-tracing-bridge-brave'
+            implementation 'io.zipkin.reporter2:zipkin-reporter-brave'
+            implementation 'org.springframework.cloud:spring-cloud-starter-circuitbreaker-resilience4j'
+            implementation project(':common-service')
+            implementation libraries.webMvc
+            implementation libraries.eurekaClient
+            implementation libraries.cloudClient
+            implementation libraries.validation
+            implementation libraries.keycloak
+            implementation libraries.keycloakAdmin
+            implementation libraries.actuator
+            implementation libraries.resourceServer
+        }
+
+        compileOnly libraries.lombok
+        developmentOnly libraries.devtools
+        annotationProcessor libraries.annoDevtools
+        testImplementation libraries.startTest
+
+    }
+}
+
+//tasks.named('test') {
+//    useJUnitPlatform()
+//}

@@ -1,0 +1,51 @@
+spring:
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/product_db
+    username: '{cipher}cb149f3fb4e5611382132c16617c52d7f0b604d6b8c3fed1e4433b9c5a2ffdce'
+    password: '{cipher}9ea912480434f64cb60f47fb6cfc696a2a4c73ee0969a426479240c203aeb984'
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  servlet:
+    multipart:
+      max-file-size: 50MB
+      max-request-size: 100MB
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: http://localhost:1234/auth/realms/go-selling-api
+          jwk-set-uri: http://localhost:1234/auth/realms/go-selling-api/protocol/openid-connect/certs
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+keycloak:
+  realm: go-selling-api
+  resource: go-selling
+  auth-server-url: http://localhost:1234/auth
+  credentials:
+    username: 'admin'
+    password: 'admin'
+    client-id: '{cipher}68cb01c2cb6cc09d52d307bb77df71dd6ea99df0449c664e7031b6cbb6529055'
+    secret: '{cipher}99bec8cc39b5461f7110a488ba1d2e213fbc7fd5adc557fb6a12e1724a366ea4cc59bd64ee9b7bba877615b6dff336c0a47780fbaf930d369f9a3ba2ceb8fa82'
+    provider: secret
+file:
+  uploadPath: product-service/src/main/resources/storage/
+openapi:
+  service:
+    title: product-service
+    version: 1.0.0
+    url: http://localhost:8080
+
+springdoc:
+  api-docs:
+    path: /product-service/v3/api-docs
+  swagger-ui:
+    oauth:
+      realm: 'go-selling-api'
+      client-id: '{cipher}68cb01c2cb6cc09d52d307bb77df71dd6ea99df0449c664e7031b6cbb6529055'
+      clientSecret: '{cipher}99bec8cc39b5461f7110a488ba1d2e213fbc7fd5adc557fb6a12e1724a366ea4cc59bd64ee9b7bba877615b6dff336c0a47780fbaf930d369f9a3ba2ceb8fa82'
+    path: /product-service/swagger-ui.html

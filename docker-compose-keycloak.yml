@@ -1,0 +1,79 @@
+version: '3.8'
+
+x-database-env: &database-env
+  POSTGRES_DB: keycloak
+  POSTGRES_USER: keycloak
+  POSTGRES_PASSWORD: keycloak
+
+x-keycloak-env: &keycloak-env
+  DB_VENDOR: POSTGRES
+  DB_ADDR: keycloak-database
+  DB_DATABASE: keycloak
+  DB_USER: keycloak
+  DB_SCHEMA: public
+  DB_PASSWORD: keycloak
+  KEYCLOAK_USER: tradewise
+  KEYCLOAK_PASSWORD: twpassword
+  KEYCLOAK_LOGLEVEL: DEBUG
+  KEYCLOAK_IMPORT: /opt/realm.json -Dkeycloak.profile.feature.upload_scripts=enabled
+  ROOT_LOGLEVEL: DEBUG
+  KEYCLOAK_USE_RESOURCE_ROLE_MAPPINGS: true
+
+networks:
+  trade-wise:
+volumes:
+  keycloak_data:
+
+services:
+  # Keycloak Database
+  keycloak-database:
+    image: postgres:14.4-alpine
+    container_name: keycloak-database-tw
+    restart: unless-stopped
+    healthcheck:
+      test: [ "CMD","pg_isready","-U","keycloak" ]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    volumes:
+      - keycloak_data:/var/lib/postgresql/data
+    environment:
+      <<: *database-env
+    ports:
+      - "5443:5432"
+    networks:
+      - trade-wise
+
+  # Keycloak
+  keycloak-server:
+    image: sleighzy/keycloak:16.1.0-arm64
+    container_name: keycloak-server-tw
+    restart: unless-stopped
+    healthcheck:
+      test: "curl --fail --silent http://localhost:8080/auth/realms/trade-wise/.well-known/openid-configuration || exit 1"
+      interval: 20s
+      timeout: 3s
+      start_period: 10s
+      retries: 5
+    volumes:
+      - ./keycloak/realm-export.json:/opt/realm.json
+    environment:
+      <<: *keycloak-env
+    ports:
+      - "9900:8080"
+      - "8443:8443"
+    depends_on:
+      - keycloak-database
+    networks:
+      - trade-wise
+
+  zipkin-server:
+    image: openzipkin/zipkin:2.23
+    container_name: zipkin-server
+    restart: unless-stopped
+    expose:
+      - '9411'
+    ports:
+      - '9411:9411'
+    networks:
+      - trade-wise

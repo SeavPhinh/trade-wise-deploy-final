@@ -1,0 +1,60 @@
+spring:
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          #         https
+          issuer-uri: https://keycloak.trade-wise.online/auth/realms/go-selling-api
+          jwk-set-uri: https://keycloak.trade-wise.online/auth/realms/go-selling-api/protocol/openid-connect/certs
+  #          local
+  #          issuer-uri: http://localhost:1234/auth/realms/go-selling-api
+  #          jwk-set-uri: http://localhost:1234/auth/realms/go-selling-api/protocol/openid-connect/certs
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: gosellingproject@gmail.com
+    password: mmlrtnqtokjctfgx
+    properties:
+      mail:
+        transport:
+          protocol: smtp
+        smtp:
+          auth: true
+          starttls:
+            enable : true
+            required : true
+          from: contact@email.com
+      from:
+        name: Sak
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://localhost:8761/eureka
+keycloak:
+  realm: go-selling-api
+  resource: go-selling
+  auth-server-url: https://keycloak.trade-wise.online/auth
+  credentials:
+    username: 'admin'
+    password: 'admin'
+    client-id: '{cipher}68cb01c2cb6cc09d52d307bb77df71dd6ea99df0449c664e7031b6cbb6529055'
+    secret: '{cipher}99bec8cc39b5461f7110a488ba1d2e213fbc7fd5adc557fb6a12e1724a366ea4cc59bd64ee9b7bba877615b6dff336c0a47780fbaf930d369f9a3ba2ceb8fa82'
+    provider: secret
+logging:
+  level:
+    org.springframework.web: debug
+openapi:
+  service:
+    title: user-service
+    version: 1.0.0
+    url: http://localhost:8080
+
+springdoc:
+  api-docs:
+    path: /user-service/v3/api-docs
+  swagger-ui:
+    oauth:
+      realm: 'go-selling-api'
+      client-id: '{cipher}68cb01c2cb6cc09d52d307bb77df71dd6ea99df0449c664e7031b6cbb6529055'
+      clientSecret: '{cipher}99bec8cc39b5461f7110a488ba1d2e213fbc7fd5adc557fb6a12e1724a366ea4cc59bd64ee9b7bba877615b6dff336c0a47780fbaf930d369f9a3ba2ceb8fa82'
+    path: /user-service/swagger-ui.html

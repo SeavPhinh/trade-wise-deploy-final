@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: eureka-server
+  profiles:
+    active: native
+  config:
+#    service deploy
+    import: optional:configserver:http://localhost:8888
+#    localhost
+#    import: optional:configserver:http://localhost:8888

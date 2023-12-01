@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: config-server
+  cloud:
+    config:
+      server:
+        git:
+          uri: https://github.com/goselling/trade-wise-demo-config.git
+          username: 'goselling'
+          password: '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'
+          clone-on-start: true
+          search-paths:
+            - category-service
+            - notification-service
+            - chat-service
+            - gateway-service
+            - post-service
+            - product-service
+            - shop-service
+            - user-info-service
+            - user-service
+            - eureka-server
+          default-label: main
+          ignore-local-ssh-settings: true
+encrypt:
+  key: sdafghfdeweqads#sazdf1212
+server:
+  port: 8888
